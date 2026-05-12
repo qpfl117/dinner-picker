@@ -406,7 +406,7 @@ function showDateResult(){
       <div class="sv-banner-title" style="color:#c0306a">💑 데이트 메뉴 추천</div>
       <div class="sv-tags">${tags.map(t=>`<span class="sv-tag" style="background:#e05480">${t}</span>`).join('')}</div>
     </div>
-    ${region && region !== '상관없어요' ? showLocalFoodSection() : ''}`;
+    `;
  
   document.getElementById('results-survey').style.display = 'block';
   document.getElementById('results-survey').innerHTML =
@@ -433,51 +433,57 @@ function showSurveyResult(){
   const mood = answers.mood;
   const body = answers.body;
   const hungry = answers.hungry;
+  const region = answers.region;
  
-  // 단계적 필터: 조건이 많이 걸려도 최소 5개 이상 보장
   function applyFilters(filters){
     let pool = [...DB];
     for(const fn of filters){
       const next = pool.filter(fn);
       if(next.length >= 3) pool = next;
-      // 3개 미만이면 해당 필터는 건너뜀
     }
     return pool;
   }
  
   const filters = [];
- 
-  // 온도: 더워요/추워요만 적용 (피곤해요는 온도 무관)
-  if(body === '더워요')       filters.push(m => m.temp === '차가운');
-  else if(body === '추워요')  filters.push(m => m.temp === '따뜻한');
- 
-  // 맵기: 속 안 좋으면 순한 것, 스트레스면 매운 것
-  if(body === '속이 안 좋아요')          filters.push(m => m.spicy === '안매운');
-  else if(mood === '스트레스 받았어요')  filters.push(m => m.spicy === '매운');
- 
-  // 배고픔: 각 옵션별 합리적인 조리방식
+  if(body === '더워요')      filters.push(m => m.temp === '차가운');
+  else if(body === '추워요') filters.push(m => m.temp === '따뜻한');
+  if(body === '속이 안 좋아요')         filters.push(m => m.spicy === '안매운');
+  else if(mood === '스트레스 받았어요') filters.push(m => m.spicy === '매운');
   if(hungry === '가볍게')
     filters.push(m => m.method.includes('면류') || m.method.includes('밥류'));
   else if(hungry === '든든하게')
     filters.push(m => m.method.includes('탕/찌개') || m.method.includes('구이') || m.method.includes('찜') || m.method.includes('밥류'));
   else if(hungry === '배터지게')
     filters.push(m => m.method.includes('구이') || m.method.includes('탕/찌개') || m.method.includes('찜'));
- 
-  // 피곤해요: 자극 적은 것 (안매운 필터 - 단, 스트레스/속안좋음과 중복 안 되게)
   if(mood === '피곤해요' && body !== '속이 안 좋아요')
     filters.push(m => m.spicy === '안매운');
  
-  const pool = applyFilters(filters);
-  const picks = pool.sort(()=>Math.random()-.5).slice(0,3);
+  let pool = applyFilters(filters);
+ 
+  // 지역 특색 메뉴 우선 배치 (최대 1개 앞으로)
+  const localMenus = (region && LOCAL_FOOD[region]) ? LOCAL_FOOD[region] : [];
+  const localPool = pool.filter(m => localMenus.includes(m.n));
+  const normalPool = pool.filter(m => !localMenus.includes(m.n));
+  const sortedPool = [...localPool, ...normalPool];
+ 
+  const picks = sortedPool.sort((a,b) => {
+    const aLocal = localMenus.includes(a.n);
+    const bLocal = localMenus.includes(b.n);
+    if(aLocal && !bLocal) return -1;
+    if(!aLocal && bLocal) return 1;
+    return Math.random() - 0.5;
+  }).slice(0,3);
+ 
   const res = document.getElementById('results-survey');
   res.style.display = 'block';
   res.innerHTML = `<div class="res-label" style="margin-top:20px">오늘의 추천 메뉴</div>` +
     picks.map((m,i)=>{
+      const isLocal = localMenus.includes(m.n);
       const shops = SHOPS[m.n]||[];
       const shopHTML = shops.length ? `<div class="shop-box"><div class="shop-label">📍 근처 맛집</div>${shops.map(s=>`<div class="shop-item">· ${s}</div>`).join('')}</div>` : '';
       return `<div class="card ${i===0?'top':''}">
         ${i===0?'<div class="badge">✨ 1순위 추천</div>':''}
-        <div class="card-name">${m.n}</div>
+        <div class="card-name">${m.n}${isLocal ? ` <span style="font-size:12px;color:#6c63d4;font-weight:500">(${region} 특색)</span>` : ''}</div>
         ${DESC[m.n]?`<div class="card-desc">${DESC[m.n]}</div>`:''}
         ${shopHTML}
       </div>`;
@@ -537,22 +543,6 @@ function applySurveyToChips(){
   updateChips();
 }
  
-function showLocalFoodSection(){
-  const region = answers.region;
-  if(!region || region === '상관없어요') return '';
-  const foods = LOCAL_FOOD[region];
-  if(!foods || !foods.length) return '';
-  return `
-    <div style="margin-top:24px">
-      <div style="font-size:13px;font-weight:700;color:#6c63d4;letter-spacing:.5px;margin-bottom:12px">📍 ${region} 지역 특색 음식</div>
-      ${foods.map(f=>`
-        <div style="background:#fff;border-radius:14px;border:1.5px solid #e8e0ff;padding:16px 18px;margin-bottom:10px">
-          <div style="font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:3px">${f.n}</div>
-          <div style="font-size:13px;color:#888;margin-bottom:6px">${f.desc}</div>
-          <div style="font-size:12px;color:#6c63d4">🏪 ${f.shop}</div>
-        </div>`).join('')}
-    </div>`;
-}
  
 function setChip(key, val){
   const c = document.querySelector(`[data-key="${key}"][data-val="${val}"]`);
@@ -566,7 +556,7 @@ function showSurveyBanner(){
       <div class="sv-banner-title">설문 결과가 반영됐어요</div>
       <div class="sv-tags">${tags.map(t=>`<span class="sv-tag">${t}</span>`).join('')}</div>
     </div>
-    ${showLocalFoodSection()}`;
+    `;
 }
  
 function skipSurvey(){
@@ -663,6 +653,19 @@ renderStep();
  
 // ===== DB =====
 const DB=[
+  {n:"밀면",temp:"차가운",method:["면류"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"곰장어구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"서대회",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"꼬막정식",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"광양불고기",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"재첩국",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"짱뚱어탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"오리탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"떡갈비",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"한정식",temp:"따뜻한",method:["밥류"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"평택갈비",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"평양냉면",temp:"차가운",method:["면류"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"갓김치",temp:"차가운",method:["생"],spicy:"매운",cuisine:"한식",protein:["채소"]},
   {n:"돼지국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"소고기국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"선지국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
@@ -912,36 +915,16 @@ const DB=[
   {n:"간장버터 스테이크 덮밥",temp:"따뜻한",method:["구이","밥류"],spicy:"안매운",cuisine:"퓨전",protein:["소고기"]},
 ];
  
+// 지역별 특색 메뉴명 (추천 시 우선 뽑기 + 태그 표시용)
 const LOCAL_FOOD = {
-  "부산":[
-    {n:"돼지국밥", desc:"부산 대표 향토음식. 뽀얀 국물에 돼지고기를 넣어 끓인 국밥", shop:"소문난돼지국밥 (동구) — 1938년 4대 노포"},
-    {n:"밀면", desc:"부산 대표 냉면. 밀가루 면을 육수에 말거나 비벼 먹는 요리", shop:"국제밀면 본점 (연제구) — 부산 밀면 원조"},
-    {n:"곰장어구이", desc:"부산 앞바다에서 잡은 먹장어를 소금이나 양념에 구운 요리", shop:"자갈치시장 곰장어골목 — 현지인 단골"},
-  ],
-  "여수":[
-    {n:"서대회", desc:"여수 대표 향토음식. 서대(참서대) 생선회를 새콤달콤하게 무친 요리", shop:"여수 수산시장 회센터"},
-    {n:"갓김치", desc:"여수산 갓으로 담근 매콤하고 알싸한 김치", shop:"여수 재래시장"},
-    {n:"꼬막정식", desc:"여수·순천 대표 꼬막 요리. 삶은 꼬막을 양념장에 무친 요리", shop:"여수 좌수영 음식특화거리"},
-  ],
-  "광양":[
-    {n:"광양불고기", desc:"참숯 위 석쇠에 구운 광양 대표 소불고기. 양념이 담백하고 깔끔함", shop:"광양불고기 시장 골목 — 원조 노포"},
-    {n:"재첩국", desc:"섬진강 재첩으로 끓인 맑고 시원한 국. 해장국으로 인기", shop:"광양 섬진강 재첩국거리"},
-  ],
-  "순천":[
-    {n:"꼬막무침", desc:"순천만 꼬막을 양념장에 무친 전남 향토음식", shop:"순천 웃장 꼬막골목"},
-    {n:"짱뚱어탕", desc:"순천만 갯벌에서 잡은 짱뚱어로 끓인 탕. 여름 보양식", shop:"순천만 일대 향토음식점"},
-    {n:"추어탕", desc:"미꾸라지를 갈아 끓인 구수한 탕. 순천 전통 향토음식", shop:"순천 전통 추어탕 골목"},
-  ],
-  "광주":[
-    {n:"오리탕", desc:"광주·전남 대표 오리 요리. 들깨와 함께 끓인 구수한 탕", shop:"광주 운암동 오리탕 골목"},
-    {n:"떡갈비", desc:"다진 소고기를 갈비뼈에 붙여 구운 담양·광주 대표 음식", shop:"광주 송정 떡갈비 골목 — 원조"},
-    {n:"한정식", desc:"전남 스타일 한상차림. 다양한 반찬과 함께 즐기는 전통 한식", shop:"광주 충장로 한정식 거리"},
-  ],
-  "평택":[
-    {n:"평택갈비", desc:"평택 대표 음식. 두껍게 썬 돼지갈비를 양념에 재워 구운 요리", shop:"육팩트 (죽백동) — 평택배 양념갈비 향토맛집"},
-    {n:"평양냉면", desc:"평택에 정착한 실향민이 만든 담백하고 깔끔한 냉면", shop:"평택 평양냉면 거리"},
-  ],
+  "부산":   ["돼지국밥","밀면","곰장어구이"],
+  "여수":   ["서대회","갓김치","꼬막정식"],
+  "광양":   ["광양불고기","재첩국"],
+  "순천":   ["꼬막무침","짱뚱어탕","추어탕"],
+  "광주":   ["오리탕","떡갈비","한정식"],
+  "평택":   ["평택갈비","평양냉면"],
 };
+ 
  
 // ===== 맛집 =====
 const SHOPS={
@@ -991,6 +974,19 @@ const SHOPS={
  
 // ===== 메뉴 설명 =====
 const DESC={
+  "밀면":"부산 대표 냉면. 밀가루 면을 육수에 말거나 비벼 먹는 요리",
+  "곰장어구이":"부산 앞바다 먹장어를 소금이나 양념에 구운 요리. 자갈치 명물",
+  "서대회":"여수 대표 향토음식. 서대 생선을 새콤달콤하게 무친 회",
+  "꼬막정식":"삶은 꼬막을 양념장에 무친 여수·순천 대표 요리",
+  "광양불고기":"참숯 석쇠에 구운 광양 대표 소불고기. 담백하고 깔끔한 맛",
+  "재첩국":"섬진강 재첩으로 끓인 맑고 시원한 국. 광양 대표 해장국",
+  "짱뚱어탕":"순천만 갯벌 짱뚱어로 끓인 탕. 여름 보양식",
+  "오리탕":"들깨와 함께 끓인 구수한 탕. 광주·전남 대표 오리 요리",
+  "떡갈비":"다진 소고기를 갈비뼈에 붙여 구운 담양·광주 대표 음식",
+  "한정식":"전남 스타일 한상차림. 다양한 반찬과 함께 즐기는 전통 한식",
+  "평택갈비":"두껍게 썬 돼지갈비를 양념에 재워 구운 평택 대표 음식",
+  "평양냉면":"평택에 정착한 실향민의 담백하고 깔끔한 냉면",
+  "갓김치":"여수산 갓으로 담근 매콤하고 알싸한 김치",
   "돼지국밥":"돼지고기를 넣어 끓인 뽀얀 국물의 국밥, 부산 대표 향토음식",
   "소고기국밥":"소고기를 넣고 끓인 구수한 국밥",
   "선지국밥":"소 선지(피)를 넣은 진한 국밥, 해장에 최고",
