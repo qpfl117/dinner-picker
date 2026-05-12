@@ -321,5 +321,60 @@ function pick(){
 document.getElementById("btn-pick").addEventListener("click",pick);
 updateChips();
 </script>
+
+<!-- ===== 지역 맛집 섹션 ===== -->
+<div style="max-width:680px;margin:48px auto 0;padding:0 0 60px">
+  <div style="height:1px;background:#e0e0e0;margin-bottom:32px"></div>
+  <h2 style="font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:6px">📍 지역 맛집 추천</h2>
+  <p style="font-size:14px;color:#999;margin-bottom:24px">부산·경남·전남 유명 맛집 — 방문 전 네이버 지도로 영업 확인 추천</p>
+
+  <!-- 지역 탭 -->
+  <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+    <button class="rtab on" data-region="busan" onclick="switchTab(this,'busan')">🌊 부산</button>
+    <button class="rtab" data-region="gyeongnam" onclick="switchTab(this,'gyeongnam')">🏔️ 경남</button>
+    <button class="rtab" data-region="jeonnam" onclick="switchTab(this,'jeonnam')">🌿 전남</button>
+  </div>
+
+  <div id="region-busan" class="rblock">
+    <div class="rcard"><div class="rname">소문난 돼지국밥</div><div class="rtag">돼지국밥 · 1938년 4대 노포</div><div class="raddr">📌 부산 동구 중앙대로 · 부산 최고 노포</div></div>
+    <div class="rcard"><div class="rname">평산옥</div><div class="rtag">돼지 수육 · 100년 전통</div><div class="raddr">📌 부산 동래구 · 수육+부추무침 원조</div></div>
+    <div class="rcard"><div class="rname">해성막창집</div><div class="rtag">소막창구이 · 대창구이</div><div class="raddr">📌 부산 해운대구 · 현지인 단골 막창집</div></div>
+    <div class="rcard"><div class="rname">국제밀면 본점</div><div class="rtag">밀면 · 부산 향토음식</div><div class="raddr">📌 부산 연제구 · 부산 밀면 원조급</div></div>
+    <div class="rcard"><div class="rname">연합횟집 (3대)</div><div class="rtag">숙성회 · 세로 회 썰기</div><div class="raddr">📌 부산 영도구 · 1979년 개업 노포횟집</div></div>
+  </div>
+
+  <div id="region-gyeongnam" class="rblock" style="display:none">
+    <div class="rcard"><div class="rname">하연옥</div><div class="rtag">진주냉면 · 육전</div><div class="raddr">📌 경남 진주시 · 진주냉면 전국구 대표</div></div>
+    <div class="rcard"><div class="rname">제일식당</div><div class="rtag">진주 육회비빔밥 · 3대 노포</div><div class="raddr">📌 경남 진주시 · 80년 전통 진주비빔밥</div></div>
+    <div class="rcard"><div class="rname">강변어탕집</div><div class="rtag">붕어곰탕 · 참게메기탕</div><div class="raddr">📌 경남 진주 남강로 · 민물매운탕 명가</div></div>
+    <div class="rcard"><div class="rname">천황식당</div><div class="rtag">삼계탕 · 한방 보양식</div><div class="raddr">📌 경남 진주시 · 진주 삼계탕 대표 맛집</div></div>
+    <div class="rcard"><div class="rname">산청흑돼지</div><div class="rtag">흑돼지 삼겹살 · 구이</div><div class="raddr">📌 경남 진주시 · 지리산 흑돼지 전문점</div></div>
+  </div>
+
+  <div id="region-jeonnam" class="rblock" style="display:none">
+    <div class="rcard"><div class="rname">국일식당</div><div class="rtag">벌교 꼬막 · 참꼬막 전문</div><div class="raddr">📌 전남 보성 벌교읍 · 1952년 개업 꼬막 원조</div></div>
+    <div class="rcard"><div class="rname">영란횟집</div><div class="rtag">민어회 · 회무침</div><div class="raddr">📌 전남 목포시 · 1969년 2대째 민어 전문</div></div>
+    <div class="rcard"><div class="rname">장터식당</div><div class="rtag">양념 꽃게 · 간장게장</div><div class="raddr">📌 전남 목포시 · 전남 별미집 1호 지정</div></div>
+    <div class="rcard"><div class="rname">대원식당</div><div class="rtag">전라도 한 상 · 향토음식</div><div class="raddr">📌 전남 순천시 · 사라져가는 남도 향토음식</div></div>
+    <div class="rcard"><div class="rname">금메달식당</div><div class="rtag">홍어 삼합 · 홍어회</div><div class="raddr">📌 전남 목포시 · 미식가·연예인 단골 홍어집</div></div>
+  </div>
+</div>
+
+<style>
+.rtab{padding:10px 20px;border-radius:99px;border:1.5px solid #ddd;background:#fff;font-size:15px;font-weight:500;color:#666;cursor:pointer}
+.rtab.on{border-color:#6c63d4;background:#eeecff;color:#3d37a0;font-weight:700}
+.rcard{background:#fff;border-radius:14px;border:1.5px solid #eee;padding:16px 18px;margin-bottom:10px}
+.rname{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.rtag{font-size:13px;color:#6c63d4;font-weight:500;margin-bottom:4px}
+.raddr{font-size:13px;color:#999}
+</style>
+<script>
+function switchTab(btn, region){
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.rblock').forEach(b=>b.style.display='none');
+  btn.classList.add('on');
+  document.getElementById('region-'+region).style.display='block';
+}
+</script>
 </body>
 </html>
