@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘 저녁 뭐 먹지? 🍽️</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretendard','Malgun Gothic',sans-serif;background:#f7f6f2;min-height:100vh;padding:28px 16px 80px}
+.wrap{max-width:680px;margin:0 auto}
+h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
+.sub{font-size:15px;color:#888;margin-bottom:32px}
+.section{margin-bottom:24px}
+.sec-label{font-size:12px;font-weight:700;color:#999;letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:99px;border:1.5px solid #ddd;background:#fff;font-size:15px;font-weight:400;color:#444;cursor:pointer;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent}
+.chip:hover{border-color:#aaa;background:#fafafa}
+.chip.on{border-color:#6c63d4;background:#eeecff;color:#3d37a0;font-weight:600}
+.chip.disabled{opacity:.25;pointer-events:none}
+.btn-row{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
+.btn-main{padding:14px 36px;border-radius:99px;border:none;background:#6c63d4;color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+.btn-main:hover{background:#5a52be}
+.btn-main:active{transform:scale(.97)}
+.btn-sub{padding:14px 20px;border-radius:99px;border:1.5px solid #ddd;background:#fff;color:#888;font-size:15px;cursor:pointer}
+.btn-sub:hover{border-color:#aaa;color:#555}
+.results{margin-top:32px}
+.res-label{font-size:12px;font-weight:700;color:#999;letter-spacing:1px;margin-bottom:14px;text-transform:uppercase}
+.card{background:#fff;border-radius:18px;border:1.5px solid #eee;padding:20px 22px;margin-bottom:12px}
+.card.top{border-color:#6c63d4;box-shadow:0 0 0 4px #eeecff}
+.badge{font-size:11px;font-weight:700;background:#eeecff;color:#3d37a0;padding:3px 10px;border-radius:99px;margin-bottom:8px;display:inline-block}
+.card-name{font-size:21px;font-weight:700;color:#1a1a1a;margin-bottom:8px}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:13px;background:#f4f4f4;color:#666;padding:4px 11px;border-radius:99px}
+.no-result{padding:20px;border-radius:14px;border:1.5px solid #eee;background:#fafafa;color:#888;font-size:15px;text-align:center}
+.btn-retry{margin-top:14px;padding:10px 22px;border-radius:99px;border:1.5px solid #ddd;background:#fff;color:#777;font-size:14px;cursor:pointer}
+.btn-retry:hover{border-color:#aaa}
+@media(max-width:480px){h1{font-size:23px}.card-name{font-size:18px}.chip{font-size:14px;padding:9px 14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>오늘 저녁 뭐 먹지? 🍽️</h1>
+  <p class="sub">조건을 골라보세요 — 안 골라도 되고, 여러 개도 됩니다</p>
+
+  <div class="section">
+    <div class="sec-label">온도</div>
+    <div class="chips" id="chips-temp">
+      <div class="chip" data-key="temp" data-val="따뜻한">🔥 따뜻한</div>
+      <div class="chip" data-key="temp" data-val="차가운">❄️ 차가운</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label">조리 방식</div>
+    <div class="chips" id="chips-method">
+      <div class="chip" data-key="method" data-val="탕/찌개">🍲 탕·찌개</div>
+      <div class="chip" data-key="method" data-val="밥류">🍚 밥류</div>
+      <div class="chip" data-key="method" data-val="면류">🍜 면류</div>
+      <div class="chip" data-key="method" data-val="찜">♨️ 찜</div>
+      <div class="chip" data-key="method" data-val="구이">🔥 구이</div>
+      <div class="chip" data-key="method" data-val="튀김">🍳 튀김</div>
+      <div class="chip" data-key="method" data-val="생">🐠 생(회류)</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label">맵기</div>
+    <div class="chips" id="chips-spicy">
+      <div class="chip" data-key="spicy" data-val="매운">🌶️ 매운</div>
+      <div class="chip" data-key="spicy" data-val="안매운">😌 안 매운</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label">요리 종류</div>
+    <div class="chips" id="chips-cuisine">
+      <div class="chip" data-key="cuisine" data-val="한식">🇰🇷 한식</div>
+      <div class="chip" data-key="cuisine" data-val="일식">🍣 일식</div>
+      <div class="chip" data-key="cuisine" data-val="중식">🥢 중식</div>
+      <div class="chip" data-key="cuisine" data-val="양식">🍝 양식</div>
+      <div class="chip" data-key="cuisine" data-val="동남아식">🌴 동남아</div>
+      <div class="chip" data-key="cuisine" data-val="인도식">🇮🇳 인도</div>
+      <div class="chip" data-key="cuisine" data-val="멕시코식">🌮 멕시코</div>
+      <div class="chip" data-key="cuisine" data-val="퓨전">✨ 퓨전</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-label">주재료</div>
+    <div class="chips" id="chips-protein">
+      <div class="chip" data-key="protein" data-val="소고기">🥩 소고기</div>
+      <div class="chip" data-key="protein" data-val="돼지고기">🐷 돼지고기</div>
+      <div class="chip" data-key="protein" data-val="닭고기">🍗 닭고기</div>
+      <div class="chip" data-key="protein" data-val="양고기">🐑 양고기</div>
+      <div class="chip" data-key="protein" data-val="해산물">🦐 해산물·생선</div>
+      <div class="chip" data-key="protein" data-val="채소">🥬 채소·두부</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-main" id="btn-pick">🎲 추천받기</button>
+    <button class="btn-sub" id="btn-reset">초기화</button>
+  </div>
+
+  <div class="results" id="results" style="display:none"></div>
+</div>
+
+<script>
+const DB=[
+  {n:"순두부찌개",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["채소"]},
+  {n:"된장찌개",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"청국장찌개",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"육개장",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["소고기"]},
+  {n:"감자탕",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"부대찌개",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"설렁탕",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"갈비탕",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"매운탕",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"해물탕",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"닭개장",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"닭볶음탕",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"삼계탕",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"동태찌개",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"순대국밥",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"콩나물국밥",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"추어탕",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"선지해장국",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"뼈해장국",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"김치찌개",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"곰탕",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"비빔밥",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"돌솥비빔밥",temp:"따뜻한",method:"밥류",spicy:"매운",cuisine:"한식",protein:["채소"]},
+  {n:"제육볶음밥",temp:"따뜻한",method:"밥류",spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"불고기덮밥",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"닭갈비덮밥",temp:"따뜻한",method:"밥류",spicy:"매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"오징어덮밥",temp:"따뜻한",method:"밥류",spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"낙지덮밥",temp:"따뜻한",method:"밥류",spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"잔치국수",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"비빔국수",temp:"차가운",method:"면류",spicy:"매운",cuisine:"한식",protein:["채소"]},
+  {n:"막국수",temp:"차가운",method:"면류",spicy:"매운",cuisine:"한식",protein:["채소"]},
+  {n:"물냉면",temp:"차가운",method:"면류",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"비빔냉면",temp:"차가운",method:"면류",spicy:"매운",cuisine:"한식",protein:["소고기"]},
+  {n:"칼국수",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"낙지볶음면",temp:"따뜻한",method:"면류",spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"수육",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"보쌈",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"족발",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"찜닭",temp:"따뜻한",method:"찜",spicy:"매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"갈비찜",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"아귀찜",temp:"따뜻한",method:"찜",spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"꽃게찜",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"삼겹살",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"목살구이",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"LA갈비",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"불고기",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"닭갈비",temp:"따뜻한",method:"구이",spicy:"매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"닭꼬치",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"고등어구이",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"갈치구이",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"제육볶음",temp:"따뜻한",method:"구이",spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"후라이드 치킨",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"양념 치킨",temp:"따뜻한",method:"튀김",spicy:"매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"오징어튀김",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"새우튀김",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"모둠회",temp:"차가운",method:"생",spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"광어회",temp:"차가운",method:"생",spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"육회",temp:"차가운",method:"생",spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"물회",temp:"차가운",method:"생",spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"라멘",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"우동",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"일식",protein:["채소"]},
+  {n:"샤부샤부",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"일식",protein:["소고기"]},
+  {n:"스키야키",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"일식",protein:["소고기"]},
+  {n:"밀푀유나베",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"돈카츠",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"치킨카츠",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"일식",protein:["닭고기"]},
+  {n:"규카츠",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"일식",protein:["소고기"]},
+  {n:"텐동",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"가츠동",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"오야코동",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"일식",protein:["닭고기"]},
+  {n:"규동",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"일식",protein:["소고기"]},
+  {n:"카레라이스",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"일식",protein:["채소"]},
+  {n:"소바",temp:"차가운",method:"면류",spicy:"안매운",cuisine:"일식",protein:["채소"]},
+  {n:"야키소바",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"일식",protein:["채소"]},
+  {n:"야키토리",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"일식",protein:["닭고기"]},
+  {n:"오코노미야키",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"연어회",temp:"차가운",method:"생",spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"스시",temp:"차가운",method:"생",spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"사시미",temp:"차가운",method:"생",spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"짬뽕",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"중식",protein:["해산물"]},
+  {n:"마라탕",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"중식",protein:["채소"]},
+  {n:"훠궈",temp:"따뜻한",method:"찜",spicy:"매운",cuisine:"중식",protein:["소고기"]},
+  {n:"짜장면",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
+  {n:"마라샹궈",temp:"따뜻한",method:"구이",spicy:"매운",cuisine:"중식",protein:["채소"]},
+  {n:"탕수육",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
+  {n:"깐풍기",temp:"따뜻한",method:"튀김",spicy:"매운",cuisine:"중식",protein:["닭고기"]},
+  {n:"꿔바로우",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
+  {n:"볶음밥",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"중식",protein:["채소"]},
+  {n:"마파두부덮밥",temp:"따뜻한",method:"밥류",spicy:"매운",cuisine:"중식",protein:["채소"]},
+  {n:"양고기 꼬치",temp:"따뜻한",method:"구이",spicy:"매운",cuisine:"중식",protein:["양고기"]},
+  {n:"베이징덕",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"중식",protein:["닭고기"]},
+  {n:"크림파스타",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"토마토파스타",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"알리오올리오",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"로제파스타",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"봉골레파스타",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"리조또",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"파에야",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"스테이크",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"양식",protein:["소고기"]},
+  {n:"포크찹",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"양식",protein:["돼지고기"]},
+  {n:"연어스테이크",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"바베큐 립",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"양식",protein:["돼지고기"]},
+  {n:"그릴드 치킨",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"양식",protein:["닭고기"]},
+  {n:"함박스테이크",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"양식",protein:["소고기"]},
+  {n:"피쉬앤칩스",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"치킨버거",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"양식",protein:["닭고기"]},
+  {n:"피자 (마르게리따)",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"피자 (페퍼로니)",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"양식",protein:["돼지고기"]},
+  {n:"클램차우더",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"니스풍 샐러드",temp:"차가운",method:"생",spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"쌀국수 (퍼)",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"동남아식",protein:["소고기"]},
+  {n:"똠양꿍",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"동남아식",protein:["해산물"]},
+  {n:"팟타이",temp:"따뜻한",method:"면류",spicy:"안매운",cuisine:"동남아식",protein:["해산물"]},
+  {n:"나시고렝",temp:"따뜻한",method:"밥류",spicy:"매운",cuisine:"동남아식",protein:["채소"]},
+  {n:"카오만가이",temp:"따뜻한",method:"찜",spicy:"안매운",cuisine:"동남아식",protein:["닭고기"]},
+  {n:"반미",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"동남아식",protein:["돼지고기"]},
+  {n:"그린커리",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"동남아식",protein:["닭고기"]},
+  {n:"레드커리",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"동남아식",protein:["소고기"]},
+  {n:"사테이 꼬치",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"동남아식",protein:["닭고기"]},
+  {n:"포케보울",temp:"차가운",method:"생",spicy:"안매운",cuisine:"동남아식",protein:["해산물"]},
+  {n:"분짜",temp:"차가운",method:"생",spicy:"안매운",cuisine:"동남아식",protein:["돼지고기"]},
+  {n:"버터 치킨 카레",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"인도식",protein:["닭고기"]},
+  {n:"팔락 파니르",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"인도식",protein:["채소"]},
+  {n:"달 카레",temp:"따뜻한",method:"탕/찌개",spicy:"안매운",cuisine:"인도식",protein:["채소"]},
+  {n:"마살라 커리",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"인도식",protein:["소고기"]},
+  {n:"탄두리 치킨",temp:"따뜻한",method:"구이",spicy:"매운",cuisine:"인도식",protein:["닭고기"]},
+  {n:"양고기 카레",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"인도식",protein:["양고기"]},
+  {n:"비리야니",temp:"따뜻한",method:"밥류",spicy:"매운",cuisine:"인도식",protein:["닭고기"]},
+  {n:"사모사",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"인도식",protein:["채소"]},
+  {n:"타코",temp:"따뜻한",method:"구이",spicy:"매운",cuisine:"멕시코식",protein:["소고기"]},
+  {n:"부리토",temp:"따뜻한",method:"구이",spicy:"매운",cuisine:"멕시코식",protein:["소고기"]},
+  {n:"퀘사디아",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"멕시코식",protein:["닭고기"]},
+  {n:"나초",temp:"따뜻한",method:"튀김",spicy:"안매운",cuisine:"멕시코식",protein:["채소"]},
+  {n:"포솔레",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"멕시코식",protein:["돼지고기"]},
+  {n:"김치파스타",temp:"따뜻한",method:"면류",spicy:"매운",cuisine:"퓨전",protein:["채소"]},
+  {n:"불고기 피자",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"퓨전",protein:["소고기"]},
+  {n:"갈비버거",temp:"따뜻한",method:"구이",spicy:"안매운",cuisine:"퓨전",protein:["소고기"]},
+  {n:"로제 떡볶이",temp:"따뜻한",method:"탕/찌개",spicy:"매운",cuisine:"퓨전",protein:["채소"]},
+  {n:"트러플 볶음밥",temp:"따뜻한",method:"밥류",spicy:"안매운",cuisine:"퓨전",protein:["채소"]},
+  {n:"크리스피 라이스 연어",temp:"차가운",method:"생",spicy:"안매운",cuisine:"퓨전",protein:["해산물"]},
+];
+
+const KEYS=["temp","method","spicy","cuisine","protein"];
+let sel={temp:[],method:[],spicy:[],cuisine:[],protein:[]};
+
+function getAvail(excKey){
+  return DB.filter(m=>KEYS.every(k=>{
+    if(k===excKey)return true;
+    if(sel[k].length===0)return true;
+    if(k==="protein")return sel[k].some(v=>m.protein.includes(v));
+    return sel[k].includes(m[k]);
+  }));
+}
+
+function updateChips(){
+  KEYS.forEach(k=>{
+    const avail=getAvail(k);
+    document.querySelectorAll(`[data-key="${k}"]`).forEach(c=>{
+      const v=c.dataset.val;
+      const exists=k==="protein"?avail.some(m=>m.protein.includes(v)):avail.some(m=>m[k]===v);
+      c.classList.toggle("disabled",!exists&&!sel[k].includes(v));
+    });
+  });
+}
+
+document.querySelectorAll(".chip").forEach(c=>{
+  c.addEventListener("click",()=>{
+    const k=c.dataset.key,v=c.dataset.val;
+    sel[k]=sel[k].includes(v)?sel[k].filter(x=>x!==v):[...sel[k],v];
+    c.classList.toggle("on",sel[k].includes(v));
+    updateChips();
+    document.getElementById("results").style.display="none";
+  });
+});
+
+document.getElementById("btn-reset").addEventListener("click",()=>{
+  sel={temp:[],method:[],spicy:[],cuisine:[],protein:[]};
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on","disabled"));
+  document.getElementById("results").style.display="none";
+});
+
+const tLabel={
+  temp:v=>v==="따뜻한"?"🔥 따뜻한":"❄️ 차가운",
+  method:v=>({"탕/찌개":"🍲 탕·찌개","밥류":"🍚 밥류","면류":"🍜 면류","찜":"♨️ 찜","구이":"🔥 구이","튀김":"🍳 튀김","생":"🐠 생(회류)"})[v]||v,
+  spicy:v=>v==="매운"?"🌶️ 매운":"😌 안 매운",
+  cuisine:v=>({"한식":"🇰🇷 한식","일식":"🍣 일식","중식":"🥢 중식","양식":"🍝 양식","동남아식":"🌴 동남아","인도식":"🇮🇳 인도","멕시코식":"🌮 멕시코","퓨전":"✨ 퓨전"})[v]||v,
+};
+const pLabel={"소고기":"🥩 소고기","돼지고기":"🐷 돼지고기","닭고기":"🍗 닭고기","양고기":"🐑 양고기","해산물":"🦐 해산물","채소":"🥬 채소·두부"};
+
+function pick(){
+  let pool=DB.filter(m=>KEYS.every(k=>{
+    if(sel[k].length===0)return true;
+    if(k==="protein")return sel[k].some(v=>m.protein.includes(v));
+    return sel[k].includes(m[k]);
+  }));
+  const res=document.getElementById("results");
+  res.style.display="block";
+  if(!pool.length){res.innerHTML='<div class="no-result">😅 조건에 맞는 메뉴가 없어요. 조건을 줄여보세요!</div>';return;}
+  const picks=pool.sort(()=>Math.random()-.5).slice(0,Math.min(3,pool.length));
+  res.innerHTML=`<div class="res-label">오늘의 추천 메뉴</div>`+picks.map((m,i)=>`
+    <div class="card ${i===0?"top":""}">
+      ${i===0?'<div class="badge">✨ 1순위 추천</div>':''}
+      <div class="card-name">${m.n}</div>
+      <div class="card-tags">
+        ${["temp","method","spicy","cuisine"].map(k=>`<span class="tag">${tLabel[k](m[k])}</span>`).join("")}
+        ${m.protein.map(p=>`<span class="tag">${pLabel[p]||p}</span>`).join("")}
+      </div>
+    </div>`).join("")+`<button class="btn-retry" onclick="pick()">🔀 다시 뽑기</button>`;
+  res.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+document.getElementById("btn-pick").addEventListener("click",pick);
+updateChips();
+</script>
+</body>
+</html>
