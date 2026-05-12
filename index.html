@@ -13,7 +13,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 /* 메인 탭 */
 .main-tab{flex:1;padding:12px 0;border:none;background:none;font-size:15px;font-weight:500;color:#aaa;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s}
 .main-tab.on{color:#6c63d4;border-bottom:3px solid #6c63d4;font-weight:700}
-
+ 
 .survey-box{margin-bottom:28px}
 .s-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
 .s-step{font-size:12px;font-weight:700;color:#6c63d4;letter-spacing:1px;margin-bottom:3px}
@@ -74,13 +74,13 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 <div class="wrap">
   <h1>오늘 저녁 뭐 먹지? 🍽️</h1>
   <p class="sub">오늘 뭐 먹을지 고민될 때 딱!</p>
-
+ 
   <!-- 메인 탭 -->
   <div style="display:flex;gap:0;margin-bottom:28px;border-bottom:2px solid #eee">
     <button class="main-tab on" id="tab-survey" onclick="switchMainTab('survey')">🎯 설문 추천</button>
     <button class="main-tab" id="tab-random" onclick="switchMainTab('random')">🎲 랜덤 추천</button>
   </div>
-
+ 
   <!-- 설문 탭 영역 -->
   <div id="panel-survey">
     <!-- 설문 -->
@@ -108,7 +108,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
       </div>
     </div>
   </div>
-
+ 
   <!-- 랜덤 탭 영역 -->
   <div id="panel-random" style="display:none">
     <div id="random-banner"></div>
@@ -171,7 +171,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
     <div class="results" id="results-random" style="display:none"></div>
   </div>
 </div>
-
+ 
 <script>
 // ===== 메인 탭 =====
 function switchMainTab(tab){
@@ -180,7 +180,7 @@ function switchMainTab(tab){
   document.getElementById('panel-survey').style.display = tab==='survey' ? 'block' : 'none';
   document.getElementById('panel-random').style.display = tab==='random' ? 'block' : 'none';
 }
-
+ 
 function goToRandomWithSurvey(){
   // 설문 결과를 랜덤 탭 칩에 반영하고 랜덤 탭으로 이동
   applySurveyToChips();
@@ -192,8 +192,8 @@ function goToRandomWithSurvey(){
     </div>`;
   switchMainTab('random');
 }
-
-
+ 
+ 
 const STEPS_NORMAL = [
   {key:"mood", opts:[
     {e:"😴",t:"피곤해요",s:"편하게 먹고 싶어요"},
@@ -229,7 +229,7 @@ const STEPS_NORMAL = [
     {e:"😊",t:"괜찮아요",s:"뭐든 괜찮아요"},
   ], step:"5 / 5", q:"오늘 몸 상태는요?", sub:"컨디션에 맞는 메뉴로 골라드릴게요"},
 ];
-
+ 
 const STEPS_HOESIK = [
   {key:"size", opts:[
     {e:"👥",t:"2~4명",s:"소규모 회식"},
@@ -243,7 +243,7 @@ const STEPS_HOESIK = [
     {e:"💰",t:"가성비로",s:"부대찌개·감자탕 계열"},
   ], step:"2 / 2", q:"오늘 분위기는요?", sub:"분위기에 맞는 메뉴를 추천해드릴게요"},
 ];
-
+ 
 const HOESIK_POOL = {
   "2~4명":{
     "가볍게 한 잔":[
@@ -312,13 +312,13 @@ const HOESIK_POOL = {
     ],
   },
 };
-
+ 
 // ===== 설문 상태 =====
 let curSteps = STEPS_NORMAL;
 let curStep = 0;
 let answers = {};
 let isHoesik = false;
-
+ 
 function renderStep(){
   const s = curSteps[curStep];
   document.getElementById('s-step').textContent = s.step;
@@ -334,7 +334,7 @@ function renderStep(){
     </button>`
   ).join('');
 }
-
+ 
 function selectOpt(el, key, val){
   document.querySelectorAll('.sopt').forEach(b => b.classList.remove('on'));
   el.classList.add('on');
@@ -349,7 +349,7 @@ function selectOpt(el, key, val){
   }
   document.getElementById('s-next').style.display = 'block';
 }
-
+ 
 function nextStep(){
   curStep++;
   if(curStep >= curSteps.length){
@@ -358,7 +358,7 @@ function nextStep(){
     renderStep();
   }
 }
-
+ 
 // 데이트 추천 메뉴 풀
 const DATE_MENUS = [
   {n:"스테이크", r:"분위기 있는 레스토랑. 와인 한 잔과 완벽한 데이트 코스"},
@@ -374,7 +374,7 @@ const DATE_MENUS = [
   {n:"까르보나라", r:"캐주얼한 이탈리안. 부담 없는 첫 데이트에 적합"},
   {n:"밀푀유나베", r:"예쁘고 건강한 나베 요리. 분위기 있는 일식 데이트"},
 ];
-
+ 
 function finishSurvey(){
   document.getElementById('survey-box').style.display = 'none';
   document.getElementById('survey-result-area').style.display = 'block';
@@ -386,7 +386,7 @@ function finishSurvey(){
     showSurveyResult();
   }
 }
-
+ 
 function showDateResult(){
   const region = answers.region;
   const body = answers.body;
@@ -395,17 +395,17 @@ function showDateResult(){
   if(body === '더워요') pool = pool.filter(m => ['모둠회','스시 (초밥)','연어스테이크','크림파스타','로제파스타'].includes(m.n));
   if(body === '추워요') pool = pool.filter(m => ['샤부샤부','스키야키','밀푀유나베','스테이크','립아이 스테이크'].includes(m.n));
   if(pool.length < 3) pool = DATE_MENUS;
-
+ 
   const picks = pool.sort(()=>Math.random()-.5).slice(0,3);
   const tags = [answers.mood, region, '데이트', answers.hungry, body].filter(t=>t&&t!=='상관없어요');
-
+ 
   document.getElementById('sv-banner').innerHTML = `
     <div class="sv-banner" style="background:#fff0f6;border:1.5px solid #ffb3d1">
       <div class="sv-banner-title" style="color:#c0306a">💑 데이트 메뉴 추천</div>
       <div class="sv-tags">${tags.map(t=>`<span class="sv-tag" style="background:#e05480">${t}</span>`).join('')}</div>
     </div>
     ${region && region !== '상관없어요' ? showLocalFoodSection() : ''}`;
-
+ 
   document.getElementById('results-survey').style.display = 'block';
   document.getElementById('results-survey').innerHTML =
     `<div class="res-label">💑 오늘의 데이트 메뉴</div>` +
@@ -421,18 +421,25 @@ function showDateResult(){
       </div>`;
     }).join('');
 }
-
+ 
 function showSurveyResult(){
-  applySurveyToChips();
   showSurveyBanner();
-  // 필터 적용해서 결과 뽑기
-  let pool = DB.filter(m => KEYS.every(k => {
-    if(sel[k].length === 0) return true;
-    if(k === "protein") return sel[k].some(v=>m.protein.includes(v));
-    if(k === "method") return sel[k].some(v=>m.method.includes(v));
-    return sel[k].includes(m[k]);
-  }));
-  if(!pool.length) pool = DB;
+  // 설문 답변 기반으로 직접 필터링 (랜덤탭 sel과 무관)
+  let pool = [...DB];
+  const mood = answers.mood;
+  const body = answers.body;
+  const hungry = answers.hungry;
+  // 몸 상태/기분으로 온도 필터
+  if(body === '더워요') pool = pool.filter(m => m.temp === '차가운');
+  else if(body === '추워요' || mood === '피곤해요') pool = pool.filter(m => m.temp === '따뜻한');
+  // 속이 안 좋으면 안매운
+  if(body === '속이 안 좋아요') pool = pool.filter(m => m.spicy === '안매운');
+  // 스트레스 받으면 매운 거
+  else if(mood === '스트레스 받았어요') pool = pool.filter(m => m.spicy === '매운');
+  // 배고픔에 따라 조리 방식 필터
+  if(hungry === '가볍게') pool = pool.filter(m => m.method.includes('면류') || m.method.includes('밥류'));
+  else if(hungry === '배터지게') pool = pool.filter(m => m.method.includes('구이') || m.method.includes('탕/찌개'));
+  if(pool.length < 3) pool = [...DB];
   const picks = pool.sort(()=>Math.random()-.5).slice(0,3);
   const res = document.getElementById('results-survey');
   res.style.display = 'block';
@@ -448,12 +455,12 @@ function showSurveyResult(){
       </div>`;
     }).join('');
 }
-
+ 
 function showHoesikResult(){
   const size = answers.size || '5~10명';
   const vibe = answers.vibe || '가볍게 한 잔';
   const pool = (HOESIK_POOL[size] && HOESIK_POOL[size][vibe]) ? HOESIK_POOL[size][vibe] : HOESIK_POOL['5~10명']['가볍게 한 잔'];
-
+ 
   document.getElementById('sv-banner').innerHTML = `
     <div class="sv-banner">
       <div class="sv-banner-title">🍻 회식 추천 결과</div>
@@ -462,7 +469,7 @@ function showHoesikResult(){
         <span class="sv-tag">${vibe}</span>
       </div>
     </div>`;
-
+ 
   const res = document.getElementById('results-survey');
   res.style.display = 'block';
   res.innerHTML = `<div class="res-label">오늘의 추천 메뉴</div>` +
@@ -478,9 +485,9 @@ function showHoesikResult(){
       </div>`;
     }).join('') +
     `<button class="btn-retry" onclick="resetAll()">🔄 설문 다시하기</button>
-     <button class="btn-retry" onclick="document.getElementById('sv-banner').innerHTML='';document.getElementById('results-survey').style.display='none';">🎛️ 카테고리로 조정</button>`;
+     <button class="btn-retry" onclick="document.getElementById('survey-result-area').style.display='none';document.getElementById('survey-box').style.display='block';resetAll();">🎛️ 카테고리로 조정</button>`;
 }
-
+ 
 function applySurveyToChips(){
   const mood = answers.mood;
   const hungry = answers.hungry;
@@ -494,7 +501,7 @@ function applySurveyToChips(){
   if(hungry === '배터지게') setChip('method','구이');
   updateChips();
 }
-
+ 
 function showLocalFoodSection(){
   const region = answers.region;
   if(!region || region === '상관없어요') return '';
@@ -511,12 +518,12 @@ function showLocalFoodSection(){
         </div>`).join('')}
     </div>`;
 }
-
+ 
 function setChip(key, val){
   const c = document.querySelector(`[data-key="${key}"][data-val="${val}"]`);
   if(c){ c.classList.add('on'); if(!sel[key].includes(val)) sel[key].push(val); }
 }
-
+ 
 function showSurveyBanner(){
   const tags = [answers.mood, answers.region, answers.who, answers.hungry, answers.body].filter(t => t && t !== '상관없어요');
   document.getElementById('sv-banner').innerHTML = `
@@ -526,12 +533,12 @@ function showSurveyBanner(){
     </div>
     ${showLocalFoodSection()}`;
 }
-
+ 
 function skipSurvey(){
   document.getElementById('survey-box').style.display = 'none';
   switchMainTab('random');
 }
-
+ 
 function resetAll(){
   curSteps = STEPS_NORMAL; curStep = 0; answers = {}; isHoesik = false;
   sel = {temp:[],method:[],spicy:[],cuisine:[],protein:[]};
@@ -543,11 +550,11 @@ function resetAll(){
   document.getElementById('survey-box').style.display = 'block';
   renderStep();
 }
-
+ 
 // ===== 카테고리 필터 =====
 const KEYS = ["temp","method","spicy","cuisine","protein"];
 let sel = {temp:[],method:[],spicy:[],cuisine:[],protein:[]};
-
+ 
 function getAvail(excKey){
   return DB.filter(m => KEYS.every(k => {
     if(k === excKey) return true;
@@ -557,7 +564,7 @@ function getAvail(excKey){
     return sel[k].includes(m[k]);
   }));
 }
-
+ 
 function updateChips(){
   KEYS.forEach(k => {
     const avail = getAvail(k);
@@ -570,7 +577,7 @@ function updateChips(){
     });
   });
 }
-
+ 
 document.querySelectorAll(".chip").forEach(c => {
   c.addEventListener("click", () => {
     const k = c.dataset.key, v = c.dataset.val;
@@ -580,13 +587,13 @@ document.querySelectorAll(".chip").forEach(c => {
     document.getElementById("results").style.display = "none";
   });
 });
-
+ 
 document.getElementById("btn-reset").addEventListener("click", () => {
   sel = {temp:[],method:[],spicy:[],cuisine:[],protein:[]};
   document.querySelectorAll(".chip").forEach(c => c.classList.remove("on","disabled"));
   document.getElementById("results").style.display = "none";
 });
-
+ 
 function pick(){
   let pool = DB.filter(m => KEYS.every(k => {
     if(sel[k].length === 0) return true;
@@ -615,10 +622,10 @@ function pick(){
     `<button class="btn-retry" onclick="pick()">🔀 다시 뽑기</button>`;
   res.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
-
+ 
 document.getElementById("btn-pick").addEventListener("click", pick);
 renderStep();
-
+ 
 // ===== DB =====
 const DB=[
   {n:"돼지국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
@@ -869,7 +876,7 @@ const DB=[
   {n:"트러플 볶음밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"안매운",cuisine:"퓨전",protein:["채소"]},
   {n:"간장버터 스테이크 덮밥",temp:"따뜻한",method:["구이","밥류"],spicy:"안매운",cuisine:"퓨전",protein:["소고기"]},
 ];
-
+ 
 // ===== 맛집 =====
 const SHOPS={
   "돼지국밥":["소문난돼지국밥 (부산 동구) — 1938년 4대 노포","쌍암식당 (전남 순천) — 웃장 국밥거리 대표"],
@@ -915,7 +922,7 @@ const SHOPS={
   "꽃게찜":["장터식당 (전남 목포) — 양념꽃게 전남 별미집 1호"],
   "돈카츠":["정동 본점 (광주 수완지구) — 숯불돈가스"],
 };
-
+ 
 // ===== 메뉴 설명 =====
 const DESC={
   "돼지국밥":"돼지고기를 넣어 끓인 뽀얀 국물의 국밥, 부산 대표 향토음식",
