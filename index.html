@@ -28,9 +28,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 .card{background:#fff;border-radius:18px;border:1.5px solid #eee;padding:20px 22px;margin-bottom:12px}
 .card.top{border-color:#6c63d4;box-shadow:0 0 0 4px #eeecff}
 .badge{font-size:11px;font-weight:700;background:#eeecff;color:#3d37a0;padding:3px 10px;border-radius:99px;margin-bottom:8px;display:inline-block}
-.card-name{font-size:21px;font-weight:700;color:#1a1a1a;margin-bottom:8px}
-.card-tags{display:flex;flex-wrap:wrap;gap:6px}
-.tag{font-size:13px;background:#f4f4f4;color:#666;padding:4px 11px;border-radius:99px}
+.card-name{font-size:21px;font-weight:700;color:#1a1a1a;margin-bottom:0}
 .no-result{padding:20px;border-radius:14px;border:1.5px solid #eee;background:#fafafa;color:#888;font-size:15px;text-align:center}
 .btn-retry{margin-top:14px;padding:10px 22px;border-radius:99px;border:1.5px solid #ddd;background:#fff;color:#777;font-size:14px;cursor:pointer}
 .btn-retry:hover{border-color:#aaa}
@@ -47,7 +45,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 
   <div class="section">
     <div class="sec-label">온도</div>
-    <div class="chips" id="chips-temp">
+    <div class="chips">
       <div class="chip" data-key="temp" data-val="따뜻한">🔥 따뜻한</div>
       <div class="chip" data-key="temp" data-val="차가운">❄️ 차가운</div>
     </div>
@@ -55,7 +53,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 
   <div class="section">
     <div class="sec-label">조리 방식</div>
-    <div class="chips" id="chips-method">
+    <div class="chips">
       <div class="chip" data-key="method" data-val="탕/찌개">🍲 탕·찌개</div>
       <div class="chip" data-key="method" data-val="밥류">🍚 밥류</div>
       <div class="chip" data-key="method" data-val="면류">🍜 면류</div>
@@ -69,7 +67,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 
   <div class="section">
     <div class="sec-label">맵기</div>
-    <div class="chips" id="chips-spicy">
+    <div class="chips">
       <div class="chip" data-key="spicy" data-val="매운">🌶️ 매운</div>
       <div class="chip" data-key="spicy" data-val="안매운">😌 안 매운</div>
     </div>
@@ -77,7 +75,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 
   <div class="section">
     <div class="sec-label">요리 종류</div>
-    <div class="chips" id="chips-cuisine">
+    <div class="chips">
       <div class="chip" data-key="cuisine" data-val="한식">🇰🇷 한식</div>
       <div class="chip" data-key="cuisine" data-val="일식">🍣 일식</div>
       <div class="chip" data-key="cuisine" data-val="중식">🥢 중식</div>
@@ -91,7 +89,7 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 
   <div class="section">
     <div class="sec-label">주재료</div>
-    <div class="chips" id="chips-protein">
+    <div class="chips">
       <div class="chip" data-key="protein" data-val="소고기">🥩 소고기</div>
       <div class="chip" data-key="protein" data-val="돼지고기">🐷 돼지고기</div>
       <div class="chip" data-key="protein" data-val="닭고기">🍗 닭고기</div>
@@ -105,147 +103,220 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
     <button class="btn-main" id="btn-pick">🎲 추천받기</button>
     <button class="btn-sub" id="btn-reset">초기화</button>
   </div>
-
   <div class="results" id="results" style="display:none"></div>
 </div>
-
 <script>
 const DB=[
-  // method는 배열로 — 해당되는 카테고리 전부 포함
-  // 한식 탕·찌개
+  {n:"돼지국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"소고기국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"선지국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"순대국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"콩나물국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"굴국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"해장국",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"뼈해장국",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"선지해장국",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"순두부찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["채소"]},
   {n:"된장찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
   {n:"청국장찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"김치찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"부대찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"육개장",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["소고기"]},
   {n:"감자탕",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
-  {n:"부대찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"설렁탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"곰탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"갈비탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"꼬리곰탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"매운탕",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
   {n:"해물탕",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"동태찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"대구탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"복국",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
   {n:"닭개장",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["닭고기"]},
   {n:"닭볶음탕",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["닭고기"]},
   {n:"삼계탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["닭고기"]},
-  {n:"동태찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
-  {n:"순대국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
-  {n:"콩나물국밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
   {n:"추어탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
-  {n:"선지해장국",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
-  {n:"뼈해장국",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
-  {n:"김치찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
-  {n:"곰탕",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
-  // 한식 밥류
+  {n:"우렁된장찌개",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
   {n:"비빔밥",temp:"따뜻한",method:["밥류"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
   {n:"돌솥비빔밥",temp:"따뜻한",method:["밥류"],spicy:"매운",cuisine:"한식",protein:["채소"]},
+  {n:"육회비빔밥",temp:"따뜻한",method:["밥류","생"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"산채비빔밥",temp:"따뜻한",method:["밥류"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
   {n:"제육볶음밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"불고기덮밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"닭갈비덮밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"매운",cuisine:"한식",protein:["닭고기"]},
   {n:"오징어덮밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
   {n:"낙지덮밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
-  // 한식 면류
+  {n:"간장게장밥",temp:"차가운",method:["밥류","생"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"양념게장밥",temp:"따뜻한",method:["밥류"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"회덮밥",temp:"차가운",method:["생","밥류"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
   {n:"잔치국수",temp:"따뜻한",method:["면류","탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
   {n:"칼국수",temp:"따뜻한",method:["면류","탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
+  {n:"해물칼국수",temp:"따뜻한",method:["면류","탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"바지락칼국수",temp:"따뜻한",method:["면류","탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"수제비",temp:"따뜻한",method:["면류","탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["채소"]},
   {n:"비빔국수",temp:"차가운",method:["면류"],spicy:"매운",cuisine:"한식",protein:["채소"]},
   {n:"막국수",temp:"차가운",method:["면류"],spicy:"매운",cuisine:"한식",protein:["채소"]},
   {n:"물냉면",temp:"차가운",method:["면류","탕/찌개"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"비빔냉면",temp:"차가운",method:["면류"],spicy:"매운",cuisine:"한식",protein:["소고기"]},
+  {n:"회냉면",temp:"차가운",method:["면류","생"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
   {n:"낙지볶음면",temp:"따뜻한",method:["면류","볶음"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
-  // 한식 찜
+  {n:"쫄면",temp:"차가운",method:["면류"],spicy:"매운",cuisine:"한식",protein:["채소"]},
   {n:"수육",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"보쌈",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"족발",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"매운족발",temp:"따뜻한",method:["찜"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"찜닭",temp:"따뜻한",method:["찜","탕/찌개"],spicy:"매운",cuisine:"한식",protein:["닭고기"]},
   {n:"갈비찜",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"아귀찜",temp:"따뜻한",method:["찜","탕/찌개"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
   {n:"꽃게찜",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
-  // 한식 구이
+  {n:"전복찜",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
   {n:"삼겹살",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"목살구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"항정살구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"갈매기살구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"LA갈비",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"소갈비구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"불고기",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
-  {n:"닭갈비",temp:"따뜻한",method:["구이","탕/찌개"],spicy:"매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"차돌박이구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"한우 등심구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"닭갈비",temp:"따뜻한",method:["구이","볶음"],spicy:"매운",cuisine:"한식",protein:["닭고기"]},
   {n:"닭꼬치",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["닭고기"]},
   {n:"고등어구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
   {n:"갈치구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
-  {n:"제육볶음",temp:"따뜻한",method:["구이"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
-  // 한식 튀김
+  {n:"조기구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"꽁치구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"장어구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"곱창구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"막창구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"대창구이",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
+  {n:"제육볶음",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"오삼불고기",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"낙지볶음",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"오징어볶음",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
+  {n:"두루치기",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"한식",protein:["돼지고기"]},
+  {n:"곱창전골",temp:"따뜻한",method:["볶음","탕/찌개"],spicy:"매운",cuisine:"한식",protein:["소고기"]},
+  {n:"떡볶이",temp:"따뜻한",method:["볶음","탕/찌개"],spicy:"매운",cuisine:"한식",protein:["채소"]},
+  {n:"쭈꾸미볶음",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
   {n:"후라이드 치킨",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"한식",protein:["닭고기"]},
   {n:"양념 치킨",temp:"따뜻한",method:["튀김","볶음"],spicy:"매운",cuisine:"한식",protein:["닭고기"]},
+  {n:"간장 치킨",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"한식",protein:["닭고기"]},
   {n:"오징어튀김",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
   {n:"새우튀김",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
-  // 한식 생
+  {n:"해물파전",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"김치전",temp:"따뜻한",method:["튀김"],spicy:"매운",cuisine:"한식",protein:["채소"]},
+  {n:"동그랑땡전",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"한식",protein:["돼지고기"]},
   {n:"모둠회",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
   {n:"광어회",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"우럭회",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"참치회",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
   {n:"육회",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"한식",protein:["소고기"]},
   {n:"물회",temp:"차가운",method:["생","탕/찌개"],spicy:"매운",cuisine:"한식",protein:["해산물"]},
-  // 일식
-  {n:"라멘",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"꼬막무침",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"한식",protein:["해산물"]},
+  {n:"라멘 (쇼유)",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"라멘 (돈코츠)",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"라멘 (미소)",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"츠케멘",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
   {n:"우동",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"안매운",cuisine:"일식",protein:["채소"]},
+  {n:"냉우동",temp:"차가운",method:["면류"],spicy:"안매운",cuisine:"일식",protein:["채소"]},
+  {n:"소바",temp:"차가운",method:["면류"],spicy:"안매운",cuisine:"일식",protein:["채소"]},
+  {n:"야키소바",temp:"따뜻한",method:["면류","볶음"],spicy:"안매운",cuisine:"일식",protein:["채소"]},
   {n:"샤부샤부",temp:"따뜻한",method:["찜","탕/찌개"],spicy:"안매운",cuisine:"일식",protein:["소고기"]},
   {n:"스키야키",temp:"따뜻한",method:["찜","탕/찌개"],spicy:"안매운",cuisine:"일식",protein:["소고기"]},
   {n:"밀푀유나베",temp:"따뜻한",method:["찜","탕/찌개"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"모츠나베",temp:"따뜻한",method:["찜","탕/찌개"],spicy:"안매운",cuisine:"일식",protein:["소고기"]},
   {n:"돈카츠",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
+  {n:"히레카츠",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
   {n:"치킨카츠",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"일식",protein:["닭고기"]},
   {n:"규카츠",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"일식",protein:["소고기"]},
+  {n:"새우텐푸라",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"카키후라이 (굴튀김)",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"가라아게",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"일식",protein:["닭고기"]},
   {n:"텐동",temp:"따뜻한",method:["튀김","밥류"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
   {n:"가츠동",temp:"따뜻한",method:["튀김","밥류"],spicy:"안매운",cuisine:"일식",protein:["돼지고기"]},
-  {n:"오야코동",temp:"따뜻한",method:["구이","밥류"],spicy:"안매운",cuisine:"일식",protein:["닭고기"]},
-  {n:"규동",temp:"따뜻한",method:["구이","밥류"],spicy:"안매운",cuisine:"일식",protein:["소고기"]},
+  {n:"오야코동",temp:"따뜻한",method:["볶음","밥류"],spicy:"안매운",cuisine:"일식",protein:["닭고기"]},
+  {n:"규동",temp:"따뜻한",method:["볶음","밥류"],spicy:"안매운",cuisine:"일식",protein:["소고기"]},
   {n:"카레라이스",temp:"따뜻한",method:["밥류","탕/찌개"],spicy:"안매운",cuisine:"일식",protein:["채소"]},
-  {n:"소바",temp:"차가운",method:["면류"],spicy:"안매운",cuisine:"일식",protein:["채소"]},
-  {n:"야키소바",temp:"따뜻한",method:["면류","볶음"],spicy:"안매운",cuisine:"일식",protein:["채소"]},
+  {n:"연어알덮밥",temp:"차가운",method:["생","밥류"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"참치덮밥",temp:"차가운",method:["생","밥류"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"카이센동",temp:"차가운",method:["생","밥류"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
   {n:"야키토리",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"일식",protein:["닭고기"]},
-  {n:"오코노미야키",temp:"따뜻한",method:["구이","튀김"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"오코노미야키",temp:"따뜻한",method:["구이","볶음"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
+  {n:"타코야키",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
   {n:"연어회",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
   {n:"스시",temp:"차가운",method:["생","밥류"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
   {n:"사시미",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"일식",protein:["해산물"]},
-  // 중식
   {n:"짬뽕",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"매운",cuisine:"중식",protein:["해산물"]},
+  {n:"짜장면",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
+  {n:"짬뽕밥",temp:"따뜻한",method:["탕/찌개","밥류"],spicy:"매운",cuisine:"중식",protein:["해산물"]},
+  {n:"짜장밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
   {n:"마라탕",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"중식",protein:["채소"]},
   {n:"훠궈",temp:"따뜻한",method:["찜","탕/찌개"],spicy:"매운",cuisine:"중식",protein:["소고기"]},
-  {n:"짜장면",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
-  {n:"마라샹궈",temp:"따뜻한",method:["구이","찜"],spicy:"매운",cuisine:"중식",protein:["채소"]},
+  {n:"마라훠궈",temp:"따뜻한",method:["찜","탕/찌개"],spicy:"매운",cuisine:"중식",protein:["소고기"]},
+  {n:"마라샹궈",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"중식",protein:["채소"]},
   {n:"탕수육",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
-  {n:"깐풍기",temp:"따뜻한",method:["튀김","구이"],spicy:"매운",cuisine:"중식",protein:["닭고기"]},
+  {n:"깐풍기",temp:"따뜻한",method:["튀김","볶음"],spicy:"매운",cuisine:"중식",protein:["닭고기"]},
   {n:"꿔바로우",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
-  {n:"볶음밥",temp:"따뜻한",method:["밥류","구이"],spicy:"안매운",cuisine:"중식",protein:["채소"]},
-  {n:"마파두부덮밥",temp:"따뜻한",method:["밥류","탕/찌개"],spicy:"매운",cuisine:"중식",protein:["채소"]},
-  {n:"양고기 꼬치",temp:"따뜻한",method:["구이"],spicy:"매운",cuisine:"중식",protein:["양고기"]},
+  {n:"유산슬",temp:"따뜻한",method:["볶음"],spicy:"안매운",cuisine:"중식",protein:["해산물"]},
+  {n:"팔보채",temp:"따뜻한",method:["볶음"],spicy:"안매운",cuisine:"중식",protein:["해산물"]},
+  {n:"고추잡채",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"중식",protein:["돼지고기"]},
+  {n:"잡채밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
+  {n:"볶음밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"안매운",cuisine:"중식",protein:["채소"]},
+  {n:"새우볶음밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"안매운",cuisine:"중식",protein:["해산물"]},
+  {n:"마파두부",temp:"따뜻한",method:["볶음"],spicy:"매운",cuisine:"중식",protein:["채소"]},
+  {n:"마파두부덮밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"매운",cuisine:"중식",protein:["채소"]},
   {n:"베이징덕",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"중식",protein:["닭고기"]},
-  // 양식
+  {n:"양고기 꼬치",temp:"따뜻한",method:["구이"],spicy:"매운",cuisine:"중식",protein:["양고기"]},
+  {n:"샥스핀 수프",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"중식",protein:["해산물"]},
+  {n:"딤섬",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
+  {n:"소룡포",temp:"따뜻한",method:["찜"],spicy:"안매운",cuisine:"중식",protein:["돼지고기"]},
   {n:"크림파스타",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
   {n:"토마토파스타",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
   {n:"알리오올리오",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
   {n:"로제파스타",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
   {n:"봉골레파스타",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"까르보나라",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"양식",protein:["돼지고기"]},
+  {n:"아라비아타",temp:"따뜻한",method:["면류"],spicy:"매운",cuisine:"양식",protein:["채소"]},
+  {n:"해산물파스타",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"라자냐",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["소고기"]},
   {n:"리조또",temp:"따뜻한",method:["밥류"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"해산물 리조또",temp:"따뜻한",method:["밥류"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
   {n:"파에야",temp:"따뜻한",method:["밥류","볶음"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
   {n:"스테이크",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["소고기"]},
+  {n:"립아이 스테이크",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["소고기"]},
+  {n:"안심 스테이크",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["소고기"]},
   {n:"포크찹",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["돼지고기"]},
-  {n:"연어스테이크",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
   {n:"바베큐 립",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["돼지고기"]},
+  {n:"연어스테이크",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
   {n:"그릴드 치킨",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["닭고기"]},
   {n:"함박스테이크",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["소고기"]},
-  {n:"피쉬앤칩스",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
-  {n:"치킨버거",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"양식",protein:["닭고기"]},
   {n:"피자 (마르게리따)",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
   {n:"피자 (페퍼로니)",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["돼지고기"]},
+  {n:"피자 (해산물)",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"피쉬앤칩스",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"치킨버거",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"양식",protein:["닭고기"]},
   {n:"클램차우더",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
-  {n:"니스풍 샐러드",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
-  // 동남아식
+  {n:"부야베스",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"양식",protein:["해산물"]},
+  {n:"미네스트로네",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"프렌치어니언수프",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"카프레제",temp:"차가운",method:["생"],spicy:"안매운",cuisine:"양식",protein:["채소"]},
+  {n:"세비체",temp:"차가운",method:["생"],spicy:"매운",cuisine:"양식",protein:["해산물"]},
   {n:"쌀국수 (퍼)",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"안매운",cuisine:"동남아식",protein:["소고기"]},
+  {n:"분보후에",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"매운",cuisine:"동남아식",protein:["소고기"]},
   {n:"똠양꿍",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"동남아식",protein:["해산물"]},
+  {n:"라크사",temp:"따뜻한",method:["탕/찌개","면류"],spicy:"매운",cuisine:"동남아식",protein:["해산물"]},
   {n:"팟타이",temp:"따뜻한",method:["면류","볶음"],spicy:"안매운",cuisine:"동남아식",protein:["해산물"]},
+  {n:"미고렝",temp:"따뜻한",method:["면류","볶음"],spicy:"매운",cuisine:"동남아식",protein:["채소"]},
   {n:"나시고렝",temp:"따뜻한",method:["밥류","볶음"],spicy:"매운",cuisine:"동남아식",protein:["채소"]},
   {n:"카오만가이",temp:"따뜻한",method:["찜","밥류"],spicy:"안매운",cuisine:"동남아식",protein:["닭고기"]},
   {n:"반미",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"동남아식",protein:["돼지고기"]},
   {n:"그린커리",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"동남아식",protein:["닭고기"]},
   {n:"레드커리",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"동남아식",protein:["소고기"]},
+  {n:"옐로우커리",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"동남아식",protein:["닭고기"]},
   {n:"사테이 꼬치",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"동남아식",protein:["닭고기"]},
   {n:"포케보울",temp:"차가운",method:["생","밥류"],spicy:"안매운",cuisine:"동남아식",protein:["해산물"]},
   {n:"분짜",temp:"차가운",method:["생","면류"],spicy:"안매운",cuisine:"동남아식",protein:["돼지고기"]},
-  // 인도식
   {n:"버터 치킨 카레",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"인도식",protein:["닭고기"]},
+  {n:"치킨 티카 마살라",temp:"따뜻한",method:["탕/찌개","구이"],spicy:"매운",cuisine:"인도식",protein:["닭고기"]},
   {n:"팔락 파니르",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"인도식",protein:["채소"]},
   {n:"달 카레",temp:"따뜻한",method:["탕/찌개"],spicy:"안매운",cuisine:"인도식",protein:["채소"]},
   {n:"마살라 커리",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"인도식",protein:["소고기"]},
@@ -253,20 +324,57 @@ const DB=[
   {n:"양고기 카레",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"인도식",protein:["양고기"]},
   {n:"비리야니",temp:"따뜻한",method:["밥류"],spicy:"매운",cuisine:"인도식",protein:["닭고기"]},
   {n:"사모사",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"인도식",protein:["채소"]},
-  // 멕시코식
+  {n:"난 & 커리",temp:"따뜻한",method:["구이","탕/찌개"],spicy:"안매운",cuisine:"인도식",protein:["채소"]},
   {n:"타코",temp:"따뜻한",method:["구이"],spicy:"매운",cuisine:"멕시코식",protein:["소고기"]},
   {n:"부리토",temp:"따뜻한",method:["구이"],spicy:"매운",cuisine:"멕시코식",protein:["소고기"]},
   {n:"퀘사디아",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"멕시코식",protein:["닭고기"]},
+  {n:"엔칠라다",temp:"따뜻한",method:["구이"],spicy:"매운",cuisine:"멕시코식",protein:["닭고기"]},
+  {n:"카르니타스",temp:"따뜻한",method:["찜","구이"],spicy:"안매운",cuisine:"멕시코식",protein:["돼지고기"]},
   {n:"나초",temp:"따뜻한",method:["튀김"],spicy:"안매운",cuisine:"멕시코식",protein:["채소"]},
   {n:"포솔레",temp:"따뜻한",method:["탕/찌개"],spicy:"매운",cuisine:"멕시코식",protein:["돼지고기"]},
-  // 퓨전
-  {n:"김치파스타",temp:"따뜻한",method:["면류","구이"],spicy:"매운",cuisine:"퓨전",protein:["채소"]},
+  {n:"김치파스타",temp:"따뜻한",method:["면류","볶음"],spicy:"매운",cuisine:"퓨전",protein:["채소"]},
   {n:"불고기 피자",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"퓨전",protein:["소고기"]},
   {n:"갈비버거",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"퓨전",protein:["소고기"]},
-  {n:"로제 떡볶이",temp:"따뜻한",method:["탕/찌개","구이"],spicy:"매운",cuisine:"퓨전",protein:["채소"]},
-  {n:"트러플 볶음밥",temp:"따뜻한",method:["밥류","구이"],spicy:"안매운",cuisine:"퓨전",protein:["채소"]},
+  {n:"로제 떡볶이",temp:"따뜻한",method:["탕/찌개","볶음"],spicy:"매운",cuisine:"퓨전",protein:["채소"]},
+  {n:"트러플 볶음밥",temp:"따뜻한",method:["밥류","볶음"],spicy:"안매운",cuisine:"퓨전",protein:["채소"]},
   {n:"크리스피 라이스 연어",temp:"차가운",method:["생","튀김"],spicy:"안매운",cuisine:"퓨전",protein:["해산물"]},
+  {n:"한우 타코",temp:"따뜻한",method:["구이"],spicy:"안매운",cuisine:"퓨전",protein:["소고기"]},
+  {n:"김치 리조또",temp:"따뜻한",method:["밥류"],spicy:"매운",cuisine:"퓨전",protein:["채소"]},
+  {n:"된장 파스타",temp:"따뜻한",method:["면류"],spicy:"안매운",cuisine:"퓨전",protein:["채소"]},
 ];
+
+const SHOPS={
+  "돼지국밥":["소문난돼지국밥 (부산 동구) — 1938년 4대 노포","쌍암식당 (전남 순천 웃장) — 국밥거리 대표"],
+  "순대국밥":["조광심민속왕순대 (부산 동래구) — 2026 부산의 맛 선정"],
+  "삼계탕":["배종관동래삼계탕 (부산 동래구) — 2026 부산의 맛 선정","천황식당 (경남 진주) — 진주 삼계탕 대표"],
+  "아귀찜":["제일솥뚜껑 (부산) — 아구찜 ★4.6","마산 아구찜 골목 (경남 창원 마산합포구) — 전국 원조"],
+  "꽃게찜":["장터식당 (전남 목포) — 양념 꽃게 전남 별미집 1호"],
+  "갈비찜":["석정갈비 (부산 동래구) — 2026 부산의 맛 선정"],
+  "보쌈":["평산옥 (부산 동래구) — 100년 전통 수육·보쌈"],
+  "수육":["평산옥 (부산 동래구) — 수육 전문 노포"],
+  "족발":["봉식당 (부산 동래구) — 2026 부산의 맛 선정"],
+  "곰탕":["제일식당 (경남 진주) — 한우 곰탕·수육"],
+  "갈비탕":["안의갈비탕 (경남 진주) — 진주 갈비탕 대표"],
+  "매운탕":["강변어탕집 (경남 진주 남강) — 붕어·참게 매운탕"],
+  "불고기":["광안리언양불고기부산집 (부산 수영구) — 2026 부산의 맛 선정","제일식당 (경남 진주) — 석쇠불고기"],
+  "삼겹살":["산청흑돼지 (경남 진주) — 지리산 흑돼지 전문"],
+  "물냉면":["하연옥 (경남 진주) — 진주냉면 전국구 대표","진주냉면 산홍 (경남 진주) — ★4.3"],
+  "비빔냉면":["하연옥 (경남 진주) — 진주 비빔냉면","국제밀면 본점 (부산 연제구) — 부산 밀면 원조"],
+  "비빔밥":["제일식당 (경남 진주) — 진주 육회비빔밥 원조"],
+  "육회비빔밥":["제일식당 (경남 진주) — 80년 전통 육회비빔밥"],
+  "육회":["제일식당 (경남 진주) — 육회비빔밥 80년 전통"],
+  "모둠회":["연합횟집 (부산 영도구) — 1979년 3대 숙성회 노포","지민이네 (전남 목포 북항 회센터)"],
+  "광어회":["연합횟집 (부산 영도구) — 숙성 광어회 전문"],
+  "물회":["여수 좌수영 음식특화거리 — 물회·서대회 전문점 다수"],
+  "연어회":["스시시안 (부산 해운대) — 2026 부산의 맛 선정"],
+  "스시":["스시시안 (부산 해운대) — 2026 부산의 맛 선정","스시하루 (경남 진주)"],
+  "사시미":["스시시안 (부산 해운대) — 2026 부산의 맛 선정","연합횟집 (부산 영도구) — 숙성 사시미"],
+  "짜장면":["신발원 (부산 동구 초량 차이나타운) — 중화요리 노포"],
+  "짬뽕":["신발원 (부산 동구 초량 차이나타운) — 중화요리 노포"],
+  "탕수육":["신발원 (부산 동구 초량 차이나타운) — 중화요리 노포"],
+  "스테이크":["611WoodFire (부산 수영구) — 2026 부산의 맛 선정","살롱드인사 (경남 진주) — 스테이크 전문"],
+  "타코":["홈리스타코 (경남 진주) — 진주 타코 대표 맛집"],
+};
 
 const KEYS=["temp","method","spicy","cuisine","protein"];
 let sel={temp:[],method:[],spicy:[],cuisine:[],protein:[]};
@@ -308,48 +416,6 @@ document.getElementById("btn-reset").addEventListener("click",()=>{
   document.getElementById("results").style.display="none";
 });
 
-const SHOPS={
-  // 확실하게 해당 음식 파는 곳만
-  "돼지국밥":["소문난돼지국밥 (부산 동구) — 1938년 4대 노포","쌍암식당 (전남 순천 웃장) — 국밥거리 대표"],
-  "순대국밥":["조광심민속왕순대 (부산 동래구) — 2026 부산의 맛 선정"],
-  "삼계탕":["배종관동래삼계탕 (부산 동래구) — 2026 부산의 맛 선정","천황식당 (경남 진주) — 진주 삼계탕 대표"],
-  "아귀찜":["제일솥뚜껑 (부산) — 아구찜 ★4.6","마산 아구찜 골목 (경남 창원 마산합포구) — 전국 원조"],
-  "꽃게찜":["장터식당 (전남 목포) — 양념 꽃게, 전남 별미집 1호"],
-  "갈비찜":["석정갈비 (부산 동래구) — 2026 부산의 맛 선정"],
-  "보쌈":["평산옥 (부산 동래구) — 100년 전통 수육·보쌈"],
-  "수육":["평산옥 (부산 동래구) — 수육 전문 노포"],
-  "족발":["봉식당 (부산 동래구) — 2026 부산의 맛 선정"],
-  "곰탕":["제일식당 (경남 진주) — 한우 곰탕·수육"],
-  "갈비탕":["안의갈비탕 (경남 진주) — 진주 갈비탕 대표"],
-  "매운탕":["강변어탕집 (경남 진주 남강) — 붕어·참게 매운탕"],
-  "불고기":["광안리언양불고기부산집 (부산 수영구) — 2026 부산의 맛 선정","제일식당 (경남 진주) — 석쇠불고기"],
-  "삼겹살":["산청흑돼지 (경남 진주) — 지리산 흑돼지 전문"],
-  "물냉면":["하연옥 (경남 진주) — 진주냉면 전국구 대표","진주냉면 산홍 (경남 진주) — ★4.3"],
-  "비빔냉면":["하연옥 (경남 진주) — 진주 비빔냉면","국제밀면 본점 (부산 연제구) — 부산 밀면 원조"],
-  "비빔밥":["제일식당 (경남 진주) — 진주 육회비빔밥 원조"],
-  "육회":["제일식당 (경남 진주) — 육회비빔밥 80년 전통"],
-  "모둠회":["연합횟집 (부산 영도구) — 1979년 3대 숙성회 노포","지민이네 (전남 목포 북항 회센터)"],
-  "광어회":["연합횟집 (부산 영도구) — 숙성 광어회 전문"],
-  "물회":["여수 좌수영 음식특화거리 — 물회·서대회 전문점 다수"],
-  "연어회":["스시시안 (부산 해운대) — 2026 부산의 맛 선정"],
-  "스시":["스시시안 (부산 해운대) — 2026 부산의 맛 선정","스시하루 (경남 진주)"],
-  "사시미":["스시시안 (부산 해운대) — 2026 부산의 맛 선정","연합횟집 (부산 영도구) — 숙성 사시미"],
-  "짜장면":["신발원 (부산 동구 초량 차이나타운) — 중화요리 노포"],
-  "짬뽕":["신발원 (부산 동구 초량 차이나타운) — 중화요리 노포"],
-  "탕수육":["신발원 (부산 동구 초량 차이나타운) — 중화요리 노포"],
-  "스테이크":["611WoodFire (부산 수영구) — 2026 부산의 맛 선정","살롱드인사 (경남 진주) — 스테이크 전문"],
-  "타코":["홈리스타코 (경남 진주) — 진주 타코 대표 맛집"],
-  "민어회":["영란횟집 (전남 목포) — 1969년 2대째 민어 전문"],
-};
-
-const tLabel={
-  temp:v=>v==="따뜻한"?"🔥 따뜻한":"❄️ 차가운",
-  method:v=>({"탕/찌개":"🍲 탕·찌개","밥류":"🍚 밥류","면류":"🍜 면류","찜":"♨️ 찜","구이":"🔥 구이","볶음":"🥘 볶음","튀김":"🍳 튀김","생":"🐠 생(회류)"})[v]||v,
-  spicy:v=>v==="매운"?"🌶️ 매운":"😌 안 매운",
-  cuisine:v=>({"한식":"🇰🇷 한식","일식":"🍣 일식","중식":"🥢 중식","양식":"🍝 양식","동남아식":"🌴 동남아","인도식":"🇮🇳 인도","멕시코식":"🌮 멕시코","퓨전":"✨ 퓨전"})[v]||v,
-};
-const pLabel={"소고기":"🥩 소고기","돼지고기":"🐷 돼지고기","닭고기":"🍗 닭고기","양고기":"🐑 양고기","해산물":"🦐 해산물","채소":"🥬 채소·두부"};
-
 function pick(){
   let pool=DB.filter(m=>KEYS.every(k=>{
     if(sel[k].length===0)return true;
@@ -367,7 +433,6 @@ function pick(){
     return`<div class="card ${i===0?"top":""}">
       ${i===0?'<div class="badge">✨ 1순위 추천</div>':''}
       <div class="card-name">${m.n}</div>
-
       ${shopHTML}
     </div>`;
   }).join("")+`<button class="btn-retry" onclick="pick()">🔀 다시 뽑기</button>`;
@@ -377,7 +442,5 @@ function pick(){
 document.getElementById("btn-pick").addEventListener("click",pick);
 updateChips();
 </script>
-
-
 </body>
 </html>
