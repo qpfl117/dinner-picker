@@ -10,7 +10,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretend
 .wrap{max-width:680px;margin:0 auto}
 h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 .sub{font-size:15px;color:#888;margin-bottom:24px}
-/* 설문 */
+/* 메인 탭 */
+.main-tab{flex:1;padding:12px 0;border:none;background:none;font-size:15px;font-weight:500;color:#aaa;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s}
+.main-tab.on{color:#6c63d4;border-bottom:3px solid #6c63d4;font-weight:700}
+
 .survey-box{margin-bottom:28px}
 .s-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
 .s-step{font-size:12px;font-weight:700;color:#6c63d4;letter-spacing:1px;margin-bottom:3px}
@@ -70,32 +73,47 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
 <body>
 <div class="wrap">
   <h1>오늘 저녁 뭐 먹지? 🍽️</h1>
-  <p class="sub">기분에 맞는 메뉴를 추천해드릴게요</p>
+  <p class="sub">오늘 뭐 먹을지 고민될 때 딱!</p>
 
-  <!-- 설문 -->
-  <div class="survey-box" id="survey-box">
-    <div class="s-header">
-      <div>
-        <div class="s-step" id="s-step">1 / 4</div>
-        <div class="s-q" id="s-q">오늘 기분이 어때요?</div>
-        <div class="s-sub" id="s-sub">입맛에 맞는 메뉴를 골라드릴게요</div>
+  <!-- 메인 탭 -->
+  <div style="display:flex;gap:0;margin-bottom:28px;border-bottom:2px solid #eee">
+    <button class="main-tab on" id="tab-survey" onclick="switchMainTab('survey')">🎯 설문 추천</button>
+    <button class="main-tab" id="tab-random" onclick="switchMainTab('random')">🎲 랜덤 추천</button>
+  </div>
+
+  <!-- 설문 탭 영역 -->
+  <div id="panel-survey">
+    <!-- 설문 -->
+    <div class="survey-box" id="survey-box">
+      <div class="s-header">
+        <div>
+          <div class="s-step" id="s-step">1 / 5</div>
+          <div class="s-q" id="s-q">오늘 기분이 어때요?</div>
+          <div class="s-sub" id="s-sub">입맛에 맞는 메뉴를 골라드릴게요</div>
+        </div>
+        <button class="s-skip" onclick="skipSurvey()">건너뛰기</button>
       </div>
-      <button class="s-skip" onclick="skipSurvey()">건너뛰기</button>
+      <div class="s-bar-wrap"><div class="s-bar" id="s-bar" style="width:20%"></div></div>
+      <div class="s-grid" id="s-opts"></div>
+      <div style="overflow:hidden">
+        <button class="s-next" id="s-next" onclick="nextStep()">다음 →</button>
+      </div>
     </div>
-    <div class="s-bar-wrap"><div class="s-bar" id="s-bar" style="width:25%"></div></div>
-    <div class="s-grid" id="s-opts"></div>
-    <div style="overflow:hidden">
-      <button class="s-next" id="s-next" onclick="nextStep()">다음 →</button>
+    <!-- 설문 결과 -->
+    <div id="survey-result-area" style="display:none">
+      <div id="sv-banner"></div>
+      <div class="results" id="results-survey"></div>
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-retry" onclick="resetAll()">🔄 설문 다시하기</button>
+        <button class="btn-retry" onclick="goToRandomWithSurvey()">🎛️ 랜덤 탭에서 세부 조정</button>
+      </div>
     </div>
   </div>
 
-  <!-- 카테고리 (설문 후 표시) -->
-  <div id="cat-box" style="display:none">
-    <div id="sv-banner"></div>
-    <div class="cat-header">
-      <div class="cat-title">🎛️ 세부 조건 조정</div>
-      <button class="btn-resurvey" onclick="resetAll()">← 설문 다시하기</button>
-    </div>
+  <!-- 랜덤 탭 영역 -->
+  <div id="panel-random" style="display:none">
+    <div id="random-banner"></div>
+    <p style="font-size:14px;color:#999;margin-bottom:20px">조건을 골라보세요 — 안 골라도 되고, 여러 개도 됩니다</p>
     <div class="section">
       <div class="sec-label">온도</div>
       <div class="chips">
@@ -151,12 +169,32 @@ h1{font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
       <button class="btn-main" id="btn-pick">🎲 추천받기</button>
       <button class="btn-sub" id="btn-reset">초기화</button>
     </div>
-    <div class="results" id="results" style="display:none"></div>
+    <div class="results" id="results-random" style="display:none"></div>
   </div>
 </div>
 
 <script>
-// ===== 설문 데이터 =====
+// ===== 메인 탭 =====
+function switchMainTab(tab){
+  document.getElementById('tab-survey').classList.toggle('on', tab==='survey');
+  document.getElementById('tab-random').classList.toggle('on', tab==='random');
+  document.getElementById('panel-survey').style.display = tab==='survey' ? 'block' : 'none';
+  document.getElementById('panel-random').style.display = tab==='random' ? 'block' : 'none';
+}
+
+function goToRandomWithSurvey(){
+  // 설문 결과를 랜덤 탭 칩에 반영하고 랜덤 탭으로 이동
+  applySurveyToChips();
+  const tags = [answers.mood, answers.region, answers.who, answers.hungry, answers.body].filter(t => t && t !== '상관없어요');
+  document.getElementById('random-banner').innerHTML = `
+    <div class="sv-banner" style="margin-bottom:16px">
+      <div class="sv-banner-title">설문 결과 반영됨</div>
+      <div class="sv-tags">${tags.map(t=>`<span class="sv-tag">${t}</span>`).join('')}</div>
+    </div>`;
+  switchMainTab('random');
+}
+
+
 const STEPS_NORMAL = [
   {key:"mood", opts:[
     {e:"😴",t:"피곤해요",s:"편하게 먹고 싶어요"},
@@ -176,8 +214,9 @@ const STEPS_NORMAL = [
   ], step:"2 / 5", q:"지금 어디에 있어요?", sub:"지역 특색 음식도 같이 추천해드릴게요"},
   {key:"who", opts:[
     {e:"🙋",t:"혼자",s:"혼밥 가능한 메뉴로"},
-    {e:"👫",t:"둘이",s:"오붓하게"},
-    {e:"👨‍👩‍👧‍👦",t:"가족·친구",s:"여럿이서 즐겁게"},
+    {e:"👫",t:"데이트",s:"분위기 있는 메뉴 추천"},
+    {e:"🧑‍🤝‍🧑",t:"친구·동성",s:"편하게 먹을 수 있는 메뉴"},
+    {e:"👨‍👩‍👧‍👦",t:"가족·단체",s:"여럿이서 즐겁게"},
   ], step:"3 / 5", q:"누구랑 먹어요?", sub:"인원에 맞는 메뉴를 추천해드릴게요"},
   {key:"hungry", opts:[
     {e:"🥗",t:"가볍게",s:"간단하게 한 끼"},
@@ -321,15 +360,94 @@ function nextStep(){
   }
 }
 
+// 데이트 추천 메뉴 풀
+const DATE_MENUS = [
+  {n:"스테이크", r:"분위기 있는 레스토랑. 와인 한 잔과 완벽한 데이트 코스"},
+  {n:"스시 (초밥)", r:"조용하고 격식 있는 오마카세 또는 스시 코스. 특별한 날에"},
+  {n:"립아이 스테이크", r:"프리미엄 스테이크 레스토랑. 기념일·첫 데이트에 추천"},
+  {n:"샤부샤부", r:"함께 익혀 먹는 재미. 건강하고 우아한 분위기"},
+  {n:"크림파스타", r:"이탈리안 레스토랑. 캐주얼하지만 분위기 있는 데이트"),},
+  {n:"로제파스타", r:"트렌디한 분위기의 레스토랑. MZ 데이트 인기 메뉴"},
+  {n:"연어스테이크", r:"가볍고 세련된 분위기. 부담 없는 데이트 식사"},
+  {n:"리조또", r:"이탈리안 레스토랑의 분위기 있는 메뉴. 조용한 대화에 좋음"},
+  {n:"모둠회", r:"신선한 회에 소주 한 잔. 편안하고 자연스러운 데이트"},
+  {n:"스키야키", r:"일본식 냄비 요리. 함께 만들어 먹는 감성 있는 데이트"},
+  {n:"까르보나라", r:"캐주얼한 이탈리안. 부담 없는 첫 데이트에 적합"},
+  {n:"밀푀유나베", r:"예쁘고 건강한 나베 요리. 분위기 있는 일식 데이트"},
+];
+
 function finishSurvey(){
   document.getElementById('survey-box').style.display = 'none';
-  document.getElementById('cat-box').style.display = 'block';
+  document.getElementById('survey-result-area').style.display = 'block';
   if(isHoesik){
     showHoesikResult();
+  } else if(answers.who === '데이트'){
+    showDateResult();
   } else {
-    applySurveyToChips();
-    showSurveyBanner();
+    showSurveyResult();
   }
+}
+
+function showDateResult(){
+  const region = answers.region;
+  const body = answers.body;
+  // 날씨·몸 상태에 따라 필터
+  let pool = [...DATE_MENUS];
+  if(body === '더워요') pool = pool.filter(m => ['모둠회','스시 (초밥)','연어스테이크','크림파스타','로제파스타'].includes(m.n));
+  if(body === '추워요') pool = pool.filter(m => ['샤부샤부','스키야키','밀푀유나베','스테이크','립아이 스테이크'].includes(m.n));
+  if(pool.length < 3) pool = DATE_MENUS;
+
+  const picks = pool.sort(()=>Math.random()-.5).slice(0,3);
+  const tags = [answers.mood, region, '데이트', answers.hungry, body].filter(t=>t&&t!=='상관없어요');
+
+  document.getElementById('sv-banner').innerHTML = `
+    <div class="sv-banner" style="background:#fff0f6;border:1.5px solid #ffb3d1">
+      <div class="sv-banner-title" style="color:#c0306a">💑 데이트 메뉴 추천</div>
+      <div class="sv-tags">${tags.map(t=>`<span class="sv-tag" style="background:#e05480">${t}</span>`).join('')}</div>
+    </div>
+    ${region && region !== '상관없어요' ? showLocalFoodSection() : ''}`;
+
+  document.getElementById('results-survey').style.display = 'block';
+  document.getElementById('results-survey').innerHTML =
+    `<div class="res-label">💑 오늘의 데이트 메뉴</div>` +
+    picks.map((m,i)=>{
+      const shops = SHOPS[m.n]||[];
+      const shopHTML = shops.length ? `<div class="shop-box"><div class="shop-label">📍 근처 맛집</div>${shops.map(s=>`<div class="shop-item">· ${s}</div>`).join('')}</div>` : '';
+      return `<div class="card ${i===0?'top':''}" style="${i===0?'border-color:#e05480;box-shadow:0 0 0 4px #fff0f6':''}">
+        ${i===0?'<div class="badge" style="background:#fff0f6;color:#c0306a">💑 1순위 추천</div>':''}
+        <div class="card-name">${m.n}</div>
+        ${DESC[m.n]?`<div class="card-desc">${DESC[m.n]}</div>`:''}
+        <div class="card-reason">💡 ${m.r}</div>
+        ${shopHTML}
+      </div>`;
+    }).join('');
+}
+
+function showSurveyResult(){
+  applySurveyToChips();
+  showSurveyBanner();
+  // 필터 적용해서 결과 뽑기
+  let pool = DB.filter(m => KEYS.every(k => {
+    if(sel[k].length === 0) return true;
+    if(k === "protein") return sel[k].some(v=>m.protein.includes(v));
+    if(k === "method") return sel[k].some(v=>m.method.includes(v));
+    return sel[k].includes(m[k]);
+  }));
+  if(!pool.length) pool = DB;
+  const picks = pool.sort(()=>Math.random()-.5).slice(0,3);
+  const res = document.getElementById('results-survey');
+  res.style.display = 'block';
+  res.innerHTML = `<div class="res-label" style="margin-top:20px">오늘의 추천 메뉴</div>` +
+    picks.map((m,i)=>{
+      const shops = SHOPS[m.n]||[];
+      const shopHTML = shops.length ? `<div class="shop-box"><div class="shop-label">📍 근처 맛집</div>${shops.map(s=>`<div class="shop-item">· ${s}</div>`).join('')}</div>` : '';
+      return `<div class="card ${i===0?'top':''}">
+        ${i===0?'<div class="badge">✨ 1순위 추천</div>':''}
+        <div class="card-name">${m.n}</div>
+        ${DESC[m.n]?`<div class="card-desc">${DESC[m.n]}</div>`:''}
+        ${shopHTML}
+      </div>`;
+    }).join('');
 }
 
 function showHoesikResult(){
@@ -477,7 +595,7 @@ function pick(){
     if(k === "method") return sel[k].some(v=>m.method.includes(v));
     return sel[k].includes(m[k]);
   }));
-  const res = document.getElementById("results");
+  const res = document.getElementById("results-random");
   res.style.display = "block";
   if(!pool.length){
     res.innerHTML = '<div style="padding:20px;border-radius:14px;border:1.5px solid #eee;background:#fafafa;color:#888;font-size:15px;text-align:center">😅 조건에 맞는 메뉴가 없어요. 조건을 줄여보세요!</div>';
