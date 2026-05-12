@@ -422,6 +422,10 @@ function showDateResult(){
         ${shopHTML}
       </div>`;
     }).join('');
+  res.innerHTML += `<div style="margin-top:16px">
+    <button class="btn-retry" onclick="resetAll()">🔄 설문 다시하기</button>
+    <button class="btn-retry" onclick="goToRandomWithSurvey()">🎛️ 랜덤탭에서 조정</button>
+  </div>`;
 }
  
 function showSurveyResult(){
@@ -478,6 +482,10 @@ function showSurveyResult(){
         ${shopHTML}
       </div>`;
     }).join('');
+  res.innerHTML += `<div style="margin-top:16px">
+    <button class="btn-retry" onclick="resetAll()">🔄 설문 다시하기</button>
+    <button class="btn-retry" onclick="goToRandomWithSurvey()">🎛️ 랜덤탭에서 조정</button>
+  </div>`;
 }
  
  
@@ -508,9 +516,11 @@ function showHoesikResult(){
         <div class="card-reason">💡 ${m.r}</div>
         ${shopHTML}
       </div>`;
-    }).join('') +
-    `<button class="btn-retry" onclick="resetAll()">🔄 설문 다시하기</button>
-     <button class="btn-retry" onclick="document.getElementById('survey-result-area').style.display='none';document.getElementById('survey-box').style.display='block';resetAll();">🎛️ 카테고리로 조정</button>`;
+    }).join('');
+  res.innerHTML += `<div style="margin-top:16px">
+    <button class="btn-retry" onclick="resetAll()">🔄 설문 다시하기</button>
+    <button class="btn-retry" onclick="switchMainTab('random')">🎲 랜덤 추천 보기</button>
+  </div>`;
 }
  
 function applySurveyToChips(){
